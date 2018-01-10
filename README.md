@@ -32,11 +32,13 @@ In this project I have utilized an Extended Kalman Filter algorithm to estimate 
 
 ## Visualisation
 
-The following graph demonstrates tracking error for Dataset 1
+The following graph compares real and estimated values for car coordinates using data from Dataset 1
 
 ![alt text][image1]
 
 ## RMSE
+
+The accuracy requirement is that the algortihm should perform with RMSE error lower than some threshold values. This shown in tables below for both datasets:
 
 Dataset 1:
 
