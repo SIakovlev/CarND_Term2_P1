@@ -18,6 +18,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
     VectorXd rmse(4);
     rmse << 0, 0, 0, 0;
 
+    // necessary argument checks
     if (!estimations.size()) {
         std::cout << "The size of estimation vector is zero." << endl;
         return rmse;
@@ -27,6 +28,8 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
         return rmse;
     }
 
+    // calculate RMS error in three steps: first, sum up squares of residuals
+    // then calculate mean and take element wise square root:
     for (auto i = 0; i < estimations.size(); i++) {
         VectorXd residuals = estimations[i] - ground_truth[i];
         residuals = residuals.array().pow(2);
@@ -51,6 +54,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
     double vx = x_state(2);
     double vy = x_state(3);
 
+    // Avoid unnecessary calculation by introducing a few variables:
     double p_2 = pow(px, 2) + pow(py, 2);
     double p = pow(p_2, 0.5);
     double p_32 = pow(p, 3);

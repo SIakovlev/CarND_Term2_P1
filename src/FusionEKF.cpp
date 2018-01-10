@@ -39,14 +39,10 @@ FusionEKF::FusionEKF() {
     H_laser_ <<     1, 0, 0, 0,
                     0, 1, 0, 0;
 
+    // Initialise Jacobian matrix with zeros at start
     Hj_.setZero();
 
-    cout << "FusionEKF constructor: " << endl;
-    cout << "R_radar_: " << endl << R_radar_ << endl;
-    cout << "R_laser_: " << endl << R_laser_ << endl;
-    cout << "H_laser_: " << endl << H_laser_ << endl;
-    cout << "Hj_: " << endl << Hj_ << endl;
-
+    // Inititalise state transition matrix F and process covariance matrix Q:
     ekf_.F_ = MatrixXd(4, 4);
     ekf_.Q_ = MatrixXd(4, 4);
 }
@@ -124,6 +120,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
      * Update the process noise covariance matrix.
      * Use noise_ax = 9 and noise_ay = 9 for your Q matrix.
     */
+
+    // Calculate delta t in seconds:
     double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0;
     previous_timestamp_ = measurement_pack.timestamp_;
 
@@ -156,54 +154,30 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
         // Radar updates
-
-        cout << "Radar: " << endl;
-
         ekf_.R_ = MatrixXd(3, 3);
         ekf_.R_ = R_radar_;
         ekf_.H_ = MatrixXd(3, 4);
         Hj_ = tools.CalculateJacobian(ekf_.x_);
+
+        // if Jacobian is ill conditioned we use it from the previous step:
         if(!Hj_.isZero(0)) {
             ekf_.H_ = Hj_;
         }
-
-        /*
-        cout << "Matrix F: " << endl << ekf_.F_ << endl;
-        cout << "Matrix Q: " << endl << ekf_.Q_ << endl;
-        cout << "Matrix P: " << endl << ekf_.P_ << endl;
-        cout << "Matrix R: " << endl << ekf_.R_ << endl;
-        cout << "Matrix H: " << endl << ekf_.H_ << endl;
-        cout << endl;
-        */
 
         ekf_.UpdateEKF(measurement_pack.raw_measurements_);
 
     } else {
         // Laser updates
-
-        cout << "LIDAR: " << endl;
-
         ekf_.R_ = MatrixXd(2, 2);
         ekf_.R_ = R_laser_;
         ekf_.H_ = MatrixXd(2, 4);
         ekf_.H_ = H_laser_;
 
-        /*
-        cout << "Matrix F: " << endl << ekf_.F_ << endl;
-        cout << "Matrix Q: " << endl << ekf_.Q_ << endl;
-        cout << "Matrix P: " << endl << ekf_.P_ << endl;
-        cout << "Matrix R: " << endl << ekf_.R_ << endl;
-        cout << "Matrix H: " << endl << ekf_.H_ << endl;
-        cout << endl;
-        */
-
         ekf_.Update(measurement_pack.raw_measurements_);
     }
 
     // print the output
-    cout << "Output: " << endl;
     cout << "x_ = " << endl << ekf_.x_ << endl;
     cout << "P_ = " << endl << ekf_.P_ << endl;
-    cout << endl;
     cout << endl;
 }
