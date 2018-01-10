@@ -1,6 +1,10 @@
+[//]: # (Image References)
+[image1]: EKF.png
+
 # Extended Kalman Filter Project
 
 In this project I have utilized an Extended Kalman Filter algorithm to estimate the state of a moving object of interest with noisy lidar and radar measurements. Passing the project requires obtaining RMSE values that are lower that the tolerance outlined in the project [rubric](https://review.udacity.com/#!/rubrics/748/view). 
+
 ---
 
 ## Important Dependencies
@@ -23,3 +27,35 @@ In this project I have utilized an Extended Kalman Filter algorithm to estimate 
 3. Compile: `cmake .. && make` 
    * On windows, you may need to run: `cmake .. -G "Unix Makefiles" && make`
 4. Run it: `./ExtendedKF `
+
+# Results
+
+## Visualisation
+
+The following graph demonstrates tracking error for Dataset 1
+
+![alt text][image1]
+
+## RMSE
+
+Dataset 1:
+
+| Parameter | RMSE | RMSE threshold |
+|:---------:|:----:|:--------------:|
+|x          |0.0974| 0.11           |
+|y          |0.0855| 0.11           |
+|Vx         |0.4517| 0.52           |
+|Vy         |0.4404| 0.52           |
+
+Dataset 2:
+
+| Parameter | RMSE | RMSE threshold |
+|:---------:|:----:|:--------------:|
+|x          |0.0726| -           |
+|y          |0.0967| -           |
+|Vx         |0.4579| -           |
+|Vy         |0.4966| -           |
+
+
+
+
