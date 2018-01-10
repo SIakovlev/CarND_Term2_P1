@@ -20,7 +20,7 @@ In this project I have utilized an Extended Kalman Filter algorithm to estimate 
   * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
   * Windows: recommend using [MinGW](http://www.mingw.org/)
 
-## Basic Build Instructions
+## Build Instructions
 
 1. Clone this repo.
 2. Make a build directory: `mkdir build && cd build`
