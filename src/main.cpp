@@ -1,5 +1,6 @@
 #include <uWS/uWS.h>
 #include <iostream>
+#include <fstream>
 #include "json.hpp"
 #include <math.h>
 #include "FusionEKF.h"
@@ -38,7 +39,10 @@ int main()
   vector<VectorXd> estimations;
   vector<VectorXd> ground_truth;
 
-  h.onMessage([&fusionEKF,&tools,&estimations,&ground_truth](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+    ofstream myfile;
+    myfile.open("obj_pose-laser-radar-ekf-output.txt");
+
+  h.onMessage([&fusionEKF,&tools,&estimations,&ground_truth, &myfile](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -121,7 +125,18 @@ int main()
     	  estimate(1) = p_y;
     	  estimate(2) = v1;
     	  estimate(3) = v2;
-    	  
+
+            // Write to txt file for visualisation
+            myfile << p_x << '\t' << p_y << '\t' << v1 << '\t' << v2 << '\t';
+            if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
+                myfile << meas_package.raw_measurements_[0] << '\t' << meas_package.raw_measurements_[1] << '\t';
+            } else if (meas_package.sensor_type_ == MeasurementPackage::RADAR) {
+                double rho = meas_package.raw_measurements_[0];
+                double phi = meas_package.raw_measurements_[1];
+                myfile << rho*cos(phi) << '\t' << rho*sin(phi) << '\t';
+            }
+            myfile << gt_values(0) << '\t' << gt_values(1) << '\t' << gt_values(2) << '\t' << gt_values(3) << endl;
+
     	  estimations.push_back(estimate);
 
     	  VectorXd RMSE = tools.CalculateRMSE(estimations, ground_truth);
@@ -182,4 +197,6 @@ int main()
     return -1;
   }
   h.run();
+
+    myfile.close();
 }
